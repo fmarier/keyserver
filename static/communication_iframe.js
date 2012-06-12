@@ -810,12 +810,38 @@
     scope: "mozks_ni"
   });
 
+  // (copied from jwcrypto's utils.js)
+  function base64urldecode(arg) {
+    var s = arg;
+    s = s.replace(/-/g, '+'); // 62nd char of encoding
+    s = s.replace(/_/g, '/'); // 63rd char of encoding
+    switch (s.length % 4) // Pad with trailing '='s
+    {
+    case 0: break; // No pad chars in this case
+    case 2: s += "=="; break; // Two pad chars
+    case 3: s += "="; break; // One pad char
+    default: throw new InputException("Illegal base64url string!");
+    }
+    return window.atob(s); // Standard base64 decoder
+  }
+
+  function getUserKey(assertion, successCB, failureCB) {
+    $.post('/wsapi/key', {assertion: assertion}, function (res) {
+      if (!res.error) {
+        successCB(base64urldecode(res.userkey));
+      } else {
+        failureCB(res.error);
+      }
+    }, 'json');
+  }
+
   chan.bind("get_user_key", function(trans, params) {
     trans.delayReturn(true);
-    setTimeout(function (){
-      var userKey = JSON.stringify("TODO: secret"); // TODO: read from localStorage
+    getUserKey(params.assertion, function (userKey) {
       trans.complete(userKey);
-    }, 0);
+    }, function (err) {
+      trans.error(err);
+    });
   });
 
 }());

@@ -14,6 +14,8 @@ etagify = require('etagify'),
 express = require('express');
 
 const
+wsapi = require('../lib/wsapi.js'),
+httputils = require('../lib/httputils.js'),
 conf = require('../lib/configuration.js'),
 logger = require('../lib/logging.js').logger;
 
@@ -66,6 +68,9 @@ app.use(express.static(path.join(__dirname, "..", "static")));
 
 // Caching for dynamic resources
 app.use(etagify());
+
+// handle /wsapi requests
+wsapi.setup({}, app);
 
 app.get('/communication_iframe', function(req, resp) {
   renderCachableView(req, resp, 'communication_iframe.ejs', {
