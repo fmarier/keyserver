@@ -828,7 +828,23 @@
   function getUserKey(assertion, successCB, failureCB) {
     $.post('/wsapi/key', {assertion: assertion}, function (res) {
       if (!res.error) {
-        successCB(base64urldecode(res.userkey));
+        if (res.userkey) {
+          successCB(base64urldecode(res.userkey));
+        } else {
+          // we don't have a key and key generation needs to happen in BID
+          // since the key will be wrapped with the BID password
+          successCB(null);
+        }
+      } else {
+        failureCB(res.error);
+      }
+    }, 'json');
+  }
+
+  function setUserKey(assertion, userKey, successCB, failureCB) {
+    $.post('/wsapi/key', {assertion: assertion, userkey: userKey}, function (res) {
+      if (!res.error) {
+          successCB();
       } else {
         failureCB(res.error);
       }
@@ -839,6 +855,15 @@
     trans.delayReturn(true);
     getUserKey(params.assertion, function (userKey) {
       trans.complete(userKey);
+    }, function (err) {
+      trans.error(err);
+    });
+  });
+
+  chan.bind("set_user_key", function(trans, params) {
+    trans.delayReturn(true);
+    setUserKey(params.assertion, params.userkey, function () {
+      trans.complete();
     }, function (err) {
       trans.error(err);
     });
