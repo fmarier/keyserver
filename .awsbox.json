@@ -1,0 +1,11 @@
+{
+  "processes": [
+    "bin/keyserver.js"
+  ],
+  "packages": [
+    "mysql-server"
+  ],
+  "hooks": {
+    "postcreate": "scripts/init_db.sh"
+  }
+}
