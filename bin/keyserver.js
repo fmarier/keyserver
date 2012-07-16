@@ -64,7 +64,9 @@ app.use(function(req, resp, next) {
 });
 
 // static files first
-app.use(express.static(path.join(__dirname, "..", "static")));
+var static_root = path.join(__dirname, "..", "static");
+app.use(express.static(static_root));
+app.set('views', static_root + '/../views');
 
 // Caching for dynamic resources
 app.use(etagify());
