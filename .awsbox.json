@@ -3,8 +3,8 @@
     "bin/keyserver.js"
   ],
   "env": {
-    "BROWSERID_ORIGIN": "https://login.keywrapping.personatest.org",
-    "BROWSERID_VERIFIER_HOST": "verifier.login.keywrapping.personatest.org",
+    "BROWSERID_ORIGIN": "https://keywrapping.personatest.org",
+    "BROWSERID_VERIFIER_HOST": "keywrapping.personatest.org",
     "BROWSERID_VERIFIER_PORT": "443",
     "BROWSERID_VERIFIER_SCHEME": "https"
   },
